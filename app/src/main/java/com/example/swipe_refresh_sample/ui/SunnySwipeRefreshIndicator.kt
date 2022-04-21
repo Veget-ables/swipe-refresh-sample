@@ -60,8 +60,8 @@ fun SunnySwipeRefreshIndicator(
         // 手動でスワイプしているときのIndicatorの位置
         offset = slingshot.offset.toFloat()
     } else {
-        // スワイプしてユーザの手が離れた後のIndicatorの位置をアニメーションする
         LaunchedEffect(state.isRefreshing) {
+            // スワイプしていないときに正しい静止位置に移動する
             animate(
                 initialValue = offset,
                 targetValue = when {
@@ -92,7 +92,7 @@ fun SunnySwipeRefreshIndicator(
 
                     LinearOutSlowInEasing
                         .transform(progress)
-                        .coerceIn(0f, 1f) // scaleを0~1fの範囲に制限する
+                        .coerceIn(0f, 1f)
                 } else 1f
 
                 scaleX = scaleFraction
@@ -107,6 +107,7 @@ fun SunnySwipeRefreshIndicator(
             contentAlignment = Alignment.Center
         ) {
             if (state.isRefreshing) {
+                // リフレッシュ中は無限に太陽を回転させる
                 val infiniteTransition = rememberInfiniteTransition()
                 val slope = infiniteTransition.animateFloat(
                     initialValue = 0f,
@@ -118,7 +119,7 @@ fun SunnySwipeRefreshIndicator(
                 )
                 Image(
                     painter = painterResource(R.drawable.weather_sunny),
-                    contentDescription = "Refreshing",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(indicatorImageSize)
                         .graphicsLayer {
@@ -144,14 +145,8 @@ private val indicatorSize = 56.dp
 private val indicatorImageSize = 36.dp
 
 /**
- * A utility function that calculates various aspects of 'slingshot' behavior.
- * Adapted from SwipeRefreshLayout#moveSpinner method.
- *
- * TODO: Investigate replacing this with a spring.
- *
- * @param offsetY The current y offset.
- * @param maxOffsetY The max y offset.
- * @param height The height of the item to slingshot.
+ * accompanistのコードを一部修正して利用
+ * ref: https://github.com/google/accompanist/blob/b523b8d08068c6299e84ed01eed9daef4b142d43/swiperefresh/src/main/java/com/google/accompanist/swiperefresh/Slingshot.kt
  */
 @Composable
 internal fun rememberUpdatedSlingshot(
@@ -162,7 +157,6 @@ internal fun rememberUpdatedSlingshot(
     val offsetPercent = min(1f, offsetY / maxOffsetY)
     val extraOffset = abs(offsetY) - maxOffsetY
 
-    // Can accommodate custom start and slingshot distance here
     val slingshotDistance = maxOffsetY
     val tensionSlingshotPercent = max(
         0f, min(extraOffset, slingshotDistance * 2) / slingshotDistance
