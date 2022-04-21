@@ -25,6 +25,12 @@ fun ListScreen(viewModel: ListViewModel = viewModel()) {
     SwipeRefresh(
         state = rememberSwipeRefreshState(isRefreshing),
         onRefresh = { viewModel.refresh() },
+        indicator = { s, trigger ->
+            SunnySwipeRefreshIndicator(
+                state = s,
+                refreshTriggerDistance = trigger
+            )
+        }
     ) {
         LazyColumn {
             items(20) {
