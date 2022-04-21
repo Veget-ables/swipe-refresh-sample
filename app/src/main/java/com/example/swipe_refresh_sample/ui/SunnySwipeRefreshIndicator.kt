@@ -1,5 +1,6 @@
 package com.example.swipe_refresh_sample.ui
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -102,40 +103,48 @@ fun SunnySwipeRefreshIndicator(
         color = MaterialTheme.colors.surface,
         elevation = adjustedElevation
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (state.isRefreshing) {
-                // リフレッシュ中は無限に太陽を回転させる
-                val infiniteTransition = rememberInfiniteTransition()
-                val slope = infiniteTransition.animateFloat(
-                    initialValue = 0f,
-                    targetValue = 360f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(2000, easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart
-                    )
-                )
-                Image(
-                    painter = painterResource(R.drawable.weather_sunny),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(indicatorImageSize)
-                        .graphicsLayer {
-                            rotationZ = slope.value
-                        }
-                )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.weather_sunny),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(indicatorImageSize)
-                        .alpha(
-                            (state.indicatorOffset / indicatorRefreshTrigger).coerceIn(0f, 1f)
+        Crossfade(
+            targetState = state.isRefreshing,
+            animationSpec = tween(durationMillis = CrossfadeDurationMs)
+        ) { refreshing ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (refreshing) {
+                    // リフレッシュ中は無限に太陽を回転させる
+                    val infiniteTransition = rememberInfiniteTransition()
+                    val slope = infiniteTransition.animateFloat(
+                        initialValue = 0f,
+                        targetValue = 360f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(2000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Restart
                         )
-                )
+                    )
+                    Image(
+                        painter = painterResource(R.drawable.weather_sunny),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(indicatorImageSize)
+                            .graphicsLayer {
+                                rotationZ = slope.value
+                            }
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.weather_sunny),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(indicatorImageSize)
+                            .alpha(
+                                (state.indicatorOffset / indicatorRefreshTrigger).coerceIn(
+                                    0f,
+                                    1f
+                                )
+                            )
+                    )
+                }
             }
         }
     }
@@ -143,6 +152,7 @@ fun SunnySwipeRefreshIndicator(
 
 private val indicatorSize = 56.dp
 private val indicatorImageSize = 36.dp
+private const val CrossfadeDurationMs = 100
 
 /**
  * accompanistのコードを一部修正して利用
