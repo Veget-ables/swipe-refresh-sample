@@ -17,7 +17,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +47,7 @@ fun SunnySwipeRefreshIndicator(
     val indicatorHeight = with(LocalDensity.current) { indicatorSize.roundToPx() }
     val refreshingOffsetPx = with(LocalDensity.current) { 16.dp.toPx() }
 
-    val slingshotOffset by rememberUpdatedSlingshotOffset(
+    val slingshot = rememberUpdatedSlingshot(
         offsetY = state.indicatorOffset,
         maxOffsetY = indicatorRefreshTrigger,
         height = indicatorHeight,
@@ -58,7 +58,7 @@ fun SunnySwipeRefreshIndicator(
 
     if (state.isSwipeInProgress) {
         // 手動でスワイプしているときのIndicatorの位置
-        offset = slingshotOffset.toFloat()
+        offset = slingshot.offset.toFloat()
     } else {
         // スワイプしてユーザの手が離れた後のIndicatorの位置をアニメーションする
         LaunchedEffect(state.isRefreshing) {
@@ -154,11 +154,11 @@ private val indicatorImageSize = 36.dp
  * @param height The height of the item to slingshot.
  */
 @Composable
-internal fun rememberUpdatedSlingshotOffset(
+internal fun rememberUpdatedSlingshot(
     offsetY: Float,
     maxOffsetY: Float,
     height: Int
-): MutableState<Int> {
+): Slingshot {
     val offsetPercent = min(1f, offsetY / maxOffsetY)
     val extraOffset = abs(offsetY) - maxOffsetY
 
@@ -175,7 +175,12 @@ internal fun rememberUpdatedSlingshotOffset(
     val targetY = height + ((slingshotDistance * offsetPercent) + extraMove).toInt()
     val offset = targetY - height
 
-    return remember {
-        mutableStateOf(offset)
+    return remember { Slingshot() }.apply {
+        this.offset = offset
     }
+}
+
+@Stable
+internal class Slingshot {
+    var offset: Int by mutableStateOf(0)
 }
