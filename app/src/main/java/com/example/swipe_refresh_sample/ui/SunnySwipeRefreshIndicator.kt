@@ -149,7 +149,7 @@ private val indicatorImageSize = 36.dp
  * ref: https://github.com/google/accompanist/blob/b523b8d08068c6299e84ed01eed9daef4b142d43/swiperefresh/src/main/java/com/google/accompanist/swiperefresh/Slingshot.kt
  */
 @Composable
-internal fun rememberUpdatedSlingshot(
+private fun rememberUpdatedSlingshot(
     offsetY: Float,
     maxOffsetY: Float,
     height: Int
@@ -175,6 +175,6 @@ internal fun rememberUpdatedSlingshot(
 }
 
 @Stable
-internal class Slingshot {
+private class Slingshot {
     var offset: Int by mutableStateOf(0)
 }
