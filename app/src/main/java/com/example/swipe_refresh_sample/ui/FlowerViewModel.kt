@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ListViewModel : ViewModel() {
+class FlowerViewModel : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
 
     val isRefreshing: StateFlow<Boolean>
