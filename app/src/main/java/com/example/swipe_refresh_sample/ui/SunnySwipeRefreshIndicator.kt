@@ -26,12 +26,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.swipe_refresh_sample.R
+import com.example.swipe_refresh_sample.ui.theme.sunnyIndicatorBackground
+import com.example.swipe_refresh_sample.ui.theme.sunnyIndicatorColor
 import com.google.accompanist.swiperefresh.SwipeRefreshState
 import kotlin.math.abs
 import kotlin.math.max
@@ -100,7 +103,7 @@ fun SunnySwipeRefreshIndicator(
                 scaleY = scaleFraction
             },
         shape = MaterialTheme.shapes.small.copy(CornerSize(percent = 50)),
-        color = MaterialTheme.colors.surface,
+        color = MaterialTheme.colors.sunnyIndicatorBackground,
         elevation = adjustedElevation
     ) {
         Crossfade(
@@ -118,22 +121,23 @@ fun SunnySwipeRefreshIndicator(
                         initialValue = 0f,
                         targetValue = 360f,
                         animationSpec = infiniteRepeatable(
-                            animation = tween(2000, easing = LinearEasing),
+                            animation = tween(3000, easing = LinearEasing),
                             repeatMode = RepeatMode.Restart
                         )
                     )
                     Image(
-                        painter = painterResource(R.drawable.weather_sunny),
+                        painter = painterResource(R.drawable.ic_sunny),
                         contentDescription = null,
                         modifier = Modifier
                             .size(indicatorImageSize)
                             .graphicsLayer {
                                 rotationZ = slope.value
-                            }
+                            },
+                        colorFilter = ColorFilter.tint(MaterialTheme.colors.sunnyIndicatorColor)
                     )
                 } else {
                     Image(
-                        painter = painterResource(R.drawable.weather_sunny),
+                        painter = painterResource(R.drawable.ic_sunny),
                         contentDescription = null,
                         modifier = Modifier
                             .size(indicatorImageSize)
@@ -142,7 +146,8 @@ fun SunnySwipeRefreshIndicator(
                                     0f,
                                     1f
                                 )
-                            )
+                            ),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colors.sunnyIndicatorColor)
                     )
                 }
             }
