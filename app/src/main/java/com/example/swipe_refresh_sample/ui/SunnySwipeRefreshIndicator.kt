@@ -160,7 +160,6 @@ private val indicatorImageSize = 36.dp
 private const val CrossfadeDurationMs = 100
 
 /**
- * accompanistのコードを一部修正して利用
  * ref: https://github.com/google/accompanist/blob/b523b8d08068c6299e84ed01eed9daef4b142d43/swiperefresh/src/main/java/com/google/accompanist/swiperefresh/Slingshot.kt
  */
 @Composable
